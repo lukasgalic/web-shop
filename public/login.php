@@ -37,7 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Retrieve password
-    $stmt = $conn->prepare("SELECT password FROM users WHERE username = ?");
+    $stmt = $conn->prepare("SELECT * FROM users WHERE username = ?");
     $stmt->bind_param("s", $username);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -46,8 +46,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $hashedPasswordFromDB = $row['password'];
     $stmt->close();
 
-    if (!password_verify($password, $hashedPasswordFromDB)) {
-        $errors[] = "Password was not correct";
+    if ($row['failed_attempts'] >= 4) {
+        $errors[] = "Too many attempts";
+    } elseif (!password_verify($password, $hashedPasswordFromDB)) {
+        $stmt = $conn->prepare("Update users SET failed_attempts = ? WHERE id = ?");
+        $increment = $row['failed_attempts'] + 1;
+        $stmt->bind_param("ss", $increment, $row["id"]);
+        $stmt->execute();
+        $stmt->close();
+        $remaining_attempts = 5 - $increment;  
+        $errors[] = "Password was not correct, number of attempts left {$remaining_attempts}";
     }
 
     // If no errors, proceed with login
