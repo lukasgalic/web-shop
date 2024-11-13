@@ -133,7 +133,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </style>
 </head>
 <body>
-    <h2>User Registration</h2>
+    <h2>User Login</h2>
     
     <?php if (!empty($message)): ?>
         <div class="message <?php echo $messageClass; ?>">
@@ -153,6 +153,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
 
         <button type="submit">Login</button>
+        <a href="register-page.php" class="button">Click here to register</a>
     </form>
 </body>
 </html>
