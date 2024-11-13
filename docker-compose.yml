@@ -7,7 +7,7 @@ services:
     volumes:
       - ./public:/var/www/html
     ports:
-      - "80:80"
+      - "8000:80"
     environment:
       - MYSQL_HOST=db
       - MYSQL_USER=lamp_user
