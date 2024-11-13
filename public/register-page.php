@@ -42,9 +42,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if (empty($password)) {
         $errors[] = "Password is required";
-    } elseif (strlen($password) < 6) {
-        $errors[] = "Password must be at least 6 characters long";
+    } elseif (strlen($password) < 8) {
+        $errors[] = "Password must be at least 8 characters long";
     }
+    $file = fopen('commonPasswords.txt', 'r');
+    while(!feof($file)) {
+        $line = trim(fgets($file)); // Remove whitespace and line endings
+        if ($line === $password) {
+            $errors[] = "Password is too common";
+            break;
+        } 
+    }
+    fclose($file);
 
     if ($password !== $confirmPassword) {
         $errors[] = "Passwords do not match";
