@@ -6,6 +6,39 @@
         header('Location: login.php');
         exit();
     }
+    $apples = 0;
+    $bananas = 0;
+    $grapefruit = 0;
+
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+        if(isset($_POST['logout'])) {
+            // Handle registration
+            logout();
+        }
+
+        // Get form data and sanitize inputs
+        $apples = trim(filter_input(INPUT_POST, 'apples', FILTER_UNSAFE_RAW));
+        $bananas = trim(filter_input(INPUT_POST, 'bananas', FILTER_UNSAFE_RAW));
+        $grapefruit = trim(filter_input(INPUT_POST, 'grapefruit', FILTER_UNSAFE_RAW));
+        $total = $apples * 2 + $bananas * 3 + $grapefruit * 4;
+        $message = "Your total will be {$total}";
+        $messageClass = "success";
+    }
+
+    function logout() {
+        $_SESSION = array();
+        if (ini_get("session.use_cookies")) {
+            $params = session_get_cookie_params();
+            setcookie(session_name(), '', time() - 42000,
+            $params["path"], $params["domain"],
+            $params["secure"], $params["httponly"]
+            );
+        }
+        session_destroy();
+        header('Location: login.php');
+        exit();
+    }
 ?>
 
 <!DOCTYPE html>
@@ -13,128 +46,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple Webshop</title>
+    <title>Web Shop</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        body {
             font-family: Arial, sans-serif;
-        }
-
-        header {
-            background: #2c3e50;
-            color: white;
-            padding: 1rem;
-            position: sticky;
-            top: 0;
-        }
-
-        nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            max-width: 1200px;
+            max-width: 500px;
             margin: 0 auto;
+            padding: 20px;
         }
-
-        .cart-preview {
-            background: #34495e;
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
-            cursor: pointer;
+        .form-group {
+            margin-bottom: 15px;
         }
-
-        main {
-            max-width: 1200px;
-            margin: 2rem auto;
-            padding: 0 1rem;
+        label {
+            display: block;
+            margin-bottom: 5px;
         }
-
-        .products {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 2rem;
-        }
-
-        .product {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 1rem;
-            text-align: center;
-        }
-
-        .product img {
+        input {
             width: 100%;
-            height: 200px;
-            object-fit: cover;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
             border-radius: 4px;
         }
-
-        .product h3 {
-            margin: 1rem 0;
-            color: #2c3e50;
-        }
-
-        .price {
-            color: #16a085;
-            font-weight: bold;
-            margin: 0.5rem 0;
-        }
-
         button {
-            background: #3498db;
+            background-color: #4CAF50;
             color: white;
+            padding: 10px 15px;
             border: none;
-            padding: 0.5rem 1rem;
             border-radius: 4px;
             cursor: pointer;
-            transition: background 0.3s ease;
         }
-
         button:hover {
-            background: #2980b9;
+            background-color: #45a049;
+        }
+        .message {
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+        .success {
+            background-color: #dff0d8;
+            color: #3c763d;
+            border: 1px solid #d6e9c6;
+        }
+        .error {
+            background-color: #f2dede;
+            color: #a94442;
+            border: 1px solid #ebccd1;
         }
     </style>
 </head>
 <body>
-    <header>
-        <nav>
-            <h1>Welcome <?php echo $_SESSION['username']?></h1>
-            <h2>SimpleShop</h1>
-            <div class="cart-preview">
-                🛒 Cart (3 items)
-            </div>
-        </nav>
-    </header>
-
-    <main>
-        <div class="products">
-            <div class="product">
-                <img src="/api/placeholder/250/200" alt="Product 1">
-                <h3>Wireless Headphones</h3>
-                <p class="price">$99.99</p>
-                <button>Add to Cart</button>
-            </div>
-            <div class="product">
-                <img src="/api/placeholder/250/200" alt="Product 2">
-                <h3>Smart Watch</h3>
-                <p class="price">$199.99</p>
-                <button>Add to Cart</button>
-            </div>
-            <div class="product">
-                <img src="/api/placeholder/250/200" alt="Product 3">
-                <h3>Bluetooth Speaker</h3>
-                <p class="price">$79.99</p>
-                <button>Add to Cart</button>
-            </div>
-            <div class="product">
-                <img src="/api/placeholder/250/200" alt="Product 4">
-                <h3>Power Bank</h3>
-                <p class="price">$49.99</p>
-                <button>Add to Cart</button>
-            </div>
+    <h1>Welcome <?php echo $_SESSION["username"] ?>!</h1>
+    <form method="POST">
+        <button type="submit" name="logout">Logout</button>
+    </form>
+    <h2>Web shop</h2>
+    
+    <?php if (!empty($message)): ?>
+        <div class="message <?php echo $messageClass; ?>">
+            <?php echo $message; ?>
         </div>
-    </main>
+    <?php endif; ?>
+
+    <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+        <div class="form-group">
+            <label for="username">Apples:</label>
+            <input type="number" id="apples" name="apples" value="<?php echo isset($username) ? htmlspecialchars($username) : ''; ?>" required>
+        </div>
+
+        <div class="form-group">
+            <label for="username">Bananas:</label>
+            <input type="number" id="bananas" name="bananas" value="<?php echo isset($username) ? htmlspecialchars($username) : ''; ?>" required>
+        </div>
+
+        <div class="form-group">
+            <label for="username">Grapefruit:</label>
+            <input type="number" id="grapefruit" name="grapefruit" value="<?php echo isset($username) ? htmlspecialchars($username) : ''; ?>" required>
+        </div>
+
+        <button type="submit">Buy!</button>
+    </form>
 </body>
 </html>
