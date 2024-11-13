@@ -80,8 +80,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->bind_param("sss", $username, $hashedPassword, $homeAddress);
         
         if ($stmt->execute()) {
-            $message = "Registration successful! You can now login.";
-            $messageClass = "success";
+            session_start();
+            $_SESSION['logged_in'] = true;
+            $_SESSION['username'] = $username;
+            $_SESSION['login_time'] = time();
+        
+            $_SESSION['expire_time'] = time() + (30 * 60);
+            header('Location: dashboard.php');
+            exit();
         } else {
             $message = "Error occurred during registration. Please try again.";
             $messageClass = "error";
