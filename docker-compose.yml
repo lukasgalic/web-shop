@@ -2,23 +2,20 @@ version: '3.8'
 
 services:
   # Apache + PHP Service
-  www:
-    image: php:8.2-apache
-    volumes:
-      - ./public:/var/www/html
+  apache:
+    build: .
+    container_name: apache
     ports:
       - "8000:80"
-    environment:
-      - MYSQL_HOST=db
-      - MYSQL_USER=lamp_user
-      - MYSQL_PASSWORD=lamp_password
-      - MYSQL_DATABASE=lamp_db
+    volumes:
+      - ./public:/var/www/html/
     depends_on:
       - db
 
   # MySQL Service
   db:
     image: mysql:8.0
+    container_name: db
     volumes:
       - db_data:/var/lib/mysql
     environment:
@@ -42,3 +39,4 @@ services:
 
 volumes:
   db_data:
+
