@@ -45,6 +45,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } elseif (strlen($password) < 8) {
         $errors[] = "Password must be at least 8 characters long";
     }
+
+    if (preg_match('/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).+$/', $password) === 0) {
+        $errors[] = "Must include upper and lower case letters, as well as a number";
+    }
+
     $file = fopen('commonPasswords.txt', 'r');
     while(!feof($file)) {
         $line = trim(fgets($file)); // Remove whitespace and line endings
