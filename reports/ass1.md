@@ -47,7 +47,7 @@ With this we can easily add information using the users `id` as key from other t
 
 # Website overview:
 
-The website itself is as minimal as it could be, there are 3 pages:
+The website itself is as minimal as it could be, there are 4 pages:
 - login page: for login with username and password
 - registration page: for setting up new accounts
 - dashboard: where you can add fruits to your cart
