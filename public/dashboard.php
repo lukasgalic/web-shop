@@ -6,9 +6,10 @@
         header('Location: login.php');
         exit();
     }
-    $apples = 0;
-    $bananas = 0;
-    $grapefruit = 0;
+
+    $_SESSION['apples'] = 0;
+    $_SESSION['bananas'] = 0;
+    $_SESSION['grapefruit'] = 0;
 
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
@@ -16,8 +17,6 @@
             // Handle registration
             logout();
         }
-
-        
 
         // Get form data and sanitize inputs
         $apples = trim(filter_input(INPUT_POST, 'apples', FILTER_UNSAFE_RAW));
