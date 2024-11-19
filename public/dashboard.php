@@ -7,9 +7,15 @@
         exit();
     }
 
-    $_SESSION['apples'] = 0;
-    $_SESSION['bananas'] = 0;
-    $_SESSION['grapefruit'] = 0;
+    if (!isset($_SESSION['apples'])) {
+        $_SESSION['apples'] = 0;
+    }
+    if (!isset($_SESSION['bananas'])) {
+        $_SESSION['bananas'] = 0;
+    }
+    if (!isset($_SESSION['grapefruit'])) {
+        $_SESSION['grapefruit'] = 0;
+    }
 
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
