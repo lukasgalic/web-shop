@@ -6,6 +6,9 @@ RUN docker-php-ext-install pdo pdo_mysql mysqli
 
 # Enable Apache mod_rewrite
 RUN a2enmod rewrite
+RUN a2enmod ssl
+
+RUN a2ensite default-ssl
 
 # Optional: Set working directory
 WORKDIR /var/www/html
