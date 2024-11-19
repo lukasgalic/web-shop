@@ -13,9 +13,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         header('Location: dashboard.php');
         exit();
     }
+    if(isset($_POST['logout'])) {
+        // Handle registration
+        logout();
+    }
 }
     $total = $_SESSION["apples"] * 2 + $_SESSION["bananas"] * 3 + $_SESSION["grapefruit"] * 4;
 
+
+    function logout() {
+        $_SESSION = array();
+        if (ini_get("session.use_cookies")) {
+            $params = session_get_cookie_params();
+            setcookie(session_name(), '', time() - 42000,
+            $params["path"], $params["domain"],
+            $params["secure"], $params["httponly"]
+            );
+        }
+        session_destroy();
+        header('Location: login.php');
+        exit();
+    }
 ?>
 
 <!DOCTYPE html>
