@@ -54,3 +54,26 @@ The website itself is as minimal as it could be, there are 4 pages:
 - cart: where you can see what is currently inside your cart
 
 Each page other than login/register have a "logout" button. Additionally if you are not logged in you are automatically redirected to the login page.
+
+
+## Website dataflow:
+
+The following mermaidJS graph shows the data flow and response from the website for each action.
+
+A few abbreviations:
+- "No cookie": There is no valid session cookie for an active login in the browser
+- "Login Check": Server side check if entered password and username are valid.
+  - Performed as a POST action with a login form (username and password) to `login.php`
+  - Valid Login: The post response with a redirect ot `dashboard.php`
+  - Invalid Login: The post response with the same page as `login.php` with an additional error element at the top informing the user.
+- "Register Check": Server side check if the entered data is valid
+  - Checks against a list of known-passwords and denies those (simple passwords) and performs additional minimum-complexity checks
+  - Performed with a POST action and a form holding username, address, password and confirm-password fields
+  - Checks username and address for minimum requirements
+  - Checks that password and confirm-password are equal
+  - If anything is missing the same page is returned with an additional error element explaining what went wrong
+  - Valid information: Account is created, added to the database and the user is sent to the `dashboard.php`
+- The "Pay!" button currently has no effect.
+- Should the user navigate to any page without a valid cookie, they are redirected to `login.php`, this is not shown in the below graph for clarity.
+
+![flowchart](ass1_mermaid.png)
