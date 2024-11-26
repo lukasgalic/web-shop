@@ -103,5 +103,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         <button type="submit">Login now</button>
     </form>
+
+
+    <p class="footer">
+        If you are using the default SQL database, there will be 2 users Alice, Bob and Evil with the password: <code>Password1!</code>
+    </p>
+
 </body>
 </html>
