@@ -1,5 +1,7 @@
 <?php
 
+session_start();
+
 // a simple search page (that is insecure and vulnerable to SQL injection)
 
 $badDeveloper = true;

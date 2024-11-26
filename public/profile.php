@@ -12,7 +12,7 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
 }
 
 
-function getAdressFromDb()
+function getAddressFromDb()
 {
     $user = $_SESSION["username"];
     $homeAddress = "";
@@ -57,12 +57,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     <h1>Hello <?php echo $_SESSION["username"] ?>!</h1>
 
-    <h2>Currently this is your saved address: <?php echo getAdressFromDb() ?></h2>
+    <h2>Currently this is your saved address: <?php echo getAddressFromDb() ?></h2>
     
     <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
         <div class="form-group">
-            <label for="username">New address:</label>
-            <input type="text" id="home_address" name="home_address" placeholder="<?php echo getAdressFromDb() ?>" required>
+            <label>New address:</label>
+            <input type="text" name="home_address" placeholder="<?php echo getAddressFromDb() ?>" required>
         </div>
 
         <button type="submit">Submit</button>

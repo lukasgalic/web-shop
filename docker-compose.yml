@@ -48,7 +48,7 @@ services:
       - "9000:80"
     volumes:
       - ./evil:/app
-    command: deno run --allow-net -A main.ts
+    command: deno run --allow-read --allow-net -A main.ts
 
 
 volumes:
