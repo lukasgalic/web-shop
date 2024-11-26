@@ -17,7 +17,6 @@ return new Response("Hello, World!");
 
 
 async function handleGetRequest(req: Request) {
-    console.log("Evil got new GET request")
     const url = new URL(req.url);
     const path = url.pathname;
     if (path === "/evil_address_change") {
@@ -30,14 +29,23 @@ async function handleGetRequest(req: Request) {
         });
     }
 
-    return new Response("GET Request. URL: " + req.url + " body: " + req.body + " params: " + url.searchParams + " pathname: " + path);
+
+    console.log("GET Request. URL: " + req.url + " body: " + req.body + " params: " + url.searchParams + " pathname: " + path)
+    return new Response("No one here but us chickens", {
+        headers: {
+            "Content-Type": "text/html",
+            "Access-Control-Allow-Origin": "*",
+        },
+    });
 }
 
 async function handlePostRequest(req: Request) {
     console.log("Evil got new POST request")
     const url = new URL(req.url);
 
-    return new Response("POST Request. URL: " + req.url + " body: " + req.body + " params: " + url.searchParams);
+    console.log("POST Request. URL: " + req.url + " body: " + req.body + " params: " + url.searchParams + " pathname: " + path)
+
+    return new Response("No one here but us chickens");
 }
 
 Deno.serve({ port: 80 }, async (req) => {

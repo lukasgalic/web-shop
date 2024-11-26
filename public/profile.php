@@ -68,8 +68,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <button type="submit">Submit</button>
 
     </form>
+
     
+<p class="footer">
+    This site is used in an XSS+CSRF attack!
+    The input of the address is not sanitized properly and just inserted into the DB.
+    But it can only be edited when logged in, meaning we need a cross site inject.
+
+    How to guard: give the form an ID and check that value when the POST request is handled on PHP site.
+    To prevent the XSS attack, sanitize the input before inserting it into the DB.
+</p>
+
 </body>
+
+
 </html>
 
 
