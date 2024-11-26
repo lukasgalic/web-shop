@@ -2,7 +2,7 @@
 
 // a simple search page (that is insecure and vulnerable to SQL injection)
 
-
+$badDeveloper = true;
 
 // get the search parameter from the URL
 $search = $_GET['search'] ?? '';
@@ -15,6 +15,7 @@ $badStmQuery = "";
 function searchUser($search)
 {
     global $badStmQuery;
+    global $badDeveloper;
 
     // Database configuration
     $dbHost = "db";     // MySQL host
@@ -31,11 +32,35 @@ function searchUser($search)
     }
 
     // Retrieve user
+    
+    if($badDeveloper){
 
-    $badStmQuery = "SELECT * FROM users WHERE username = '$search'";
+        $badStmQuery = "SELECT * FROM users WHERE username = '$search'";
+        $stmt = $conn->prepare($badStmQuery);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        $row = $result->fetch_all();
+        $stmt->close();
+
+        return $row;
+
+    }else{
+        $stmQuery = "SELECT * FROM users WHERE username = ?";
+        $stmt = $conn->prepare($stmQuery);
+        $stmt->bind_param("s", $search);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        $row = $result->fetch_all();
+        $stmt->close();
+
+        return $row;
+    }
 
 
-    $stmt = $conn->prepare( $badStmQuery);
+
+
     $stmt->execute();
     $result = $stmt->get_result();
 
@@ -96,6 +121,10 @@ function searchUser($search)
     <br>
     The code for the search string is not sanitized, but directly inserted into the SQL request. Meaning a classic escape trick works well.
     <br>
+    Try inserting code like this into the search field: <code> ' OR 1=1 -- </code> (mind the space after the --)
+
+    <br>
+    The PHP code has a flag for toggling between the bad and good code. You can change this by setting the $badDeveloper variable to false.
 
     <?php
         if(!empty($badStmQuery)){
