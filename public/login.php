@@ -36,15 +36,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $errors[] = "Password must be at least 6 characters long";
     }
 
-    // Retrieve password
+    // Unsafe:
+    // Insecure against ' OR '1'='1 for password
+    $query = "SELECT * FROM users WHERE username='$username' AND password='$password'";
+    $result = mysqli_query($conn, $query);
+    if (!mysqli_num_rows($result) > 0) {
+        $errors[] = "Wrong username or password";
+    }
+    
+    // Safe according to the above code:
+    /*
+    $stmt = $conn->prepare("SELECT * FROM users WHERE username = ? AND password = ?");
+    $stmt->bind_param("ss", $username, $password);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    if (!mysqli_num_rows($result) > 0) {
+        $errors[] = "Wrong username or password";
+    }
+    */
+    // Extremely safe:
+    /*
     $stmt = $conn->prepare("SELECT * FROM users WHERE username = ?");
     $stmt->bind_param("s", $username);
     $stmt->execute();
     $result = $stmt->get_result();
+    $stmt->close();
 
     $row = $result->fetch_assoc();
     $hashedPasswordFromDB = $row['password'];
-    $stmt->close();
 
     if ($row['failed_attempts'] >= 4) {
         $errors[] = "Too many attempts";
@@ -57,7 +76,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $remaining_attempts = 5 - $increment;  
         $errors[] = "Password was not correct, number of attempts left {$remaining_attempts}";
     }
-
+    */
     // If no errors, proceed with login
     if (empty($errors)) {
         session_start();
