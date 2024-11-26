@@ -11,9 +11,9 @@ CREATE TABLE `users` (
 
 
 INSERT INTO `users` (`id`, `username`, `password`, `failed_attempts`, `home_address`, `created_at`) VALUES
-(1, 'Alice', '$2y$10$K1pHIgaSCvzvqVGq7tGMduK8aET.eqwb.QbdLEFEP3uYYS0SdrVoG', 0, 'Alices Adress', '2024-11-26 13:46:27'),
+(1, 'Alice', '$2y$10$A4OIs2RXF72UMXklBpTbF.2sTYGqagUyDr/MRXvKLRRRr7G0QpUnG', 0, 'Alices Adress', '2024-11-26 13:46:27'),
 (2, 'Bob', '$2y$10$A4OIs2RXF72UMXklBpTbF.2sTYGqagUyDr/MRXvKLRRRr7G0QpUnG', 0, 'Bobs Adress', '2024-11-26 13:47:03'),
-(3, 'Evil', '$2y$10$pW5s31Nnhasl/RysQ2OJW.X4FRRvSbseypkIHWr.PUWDxGAC/PLuy', 0, 'Evils Adress', '2024-11-26 13:48:19');
+(3, 'Evil', '$2y$10$A4OIs2RXF72UMXklBpTbF.2sTYGqagUyDr/MRXvKLRRRr7G0QpUnG', 0, 'Evils Adress', '2024-11-26 13:48:19');
 
 -- Move the auto increment to 4 (next id)
 ALTER TABLE `users`
