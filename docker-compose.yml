@@ -41,6 +41,16 @@ services:
     depends_on:
       - db
 
+  evil:
+    build: ./evil
+    container_name: evil
+    ports:
+      - "9000:80"
+    volumes:
+      - ./evil:/app
+    command: deno run --allow-net -A main.ts
+
+
 volumes:
   db_data:
 
