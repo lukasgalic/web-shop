@@ -1,7 +1,7 @@
 <?php
 // A simple top-bar that redirects to all needed pages
 
-$current_path = $_SERVER['REQUEST_URI'];
+$current_path = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
 
 $user_is_logged_in = isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true;
 
