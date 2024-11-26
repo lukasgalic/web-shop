@@ -7,7 +7,7 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            max-width: 500px;
+            max-width: 800px;
             margin: 0 auto;
             padding: 20px;
         }
@@ -55,5 +55,21 @@
             color: #a94442;
             border: 1px solid #ebccd1;
         }
+        .divider {
+            margin-top: 20px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+            background-color: gray;
+            height: 20px;
+            width: 100%;
+        }
+        .footer {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            position: absolute;
+            bottom: 0;
+        }
+
     </style>
 </head>
