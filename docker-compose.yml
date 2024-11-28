@@ -12,6 +12,7 @@ services:
       - ./public:/var/www/html/
       - ./config/apache-ssl.conf:/etc/apache2/sites-available/default-ssl.conf
       - ./certs:/etc/ssl/private
+      - ./php.ini:/usr/local/etc/php/conf.d/custom.ini # Add this line to mount php.ini
     depends_on:
       - db
 
@@ -53,4 +54,3 @@ services:
 
 volumes:
   db_data:
-

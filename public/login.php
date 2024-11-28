@@ -5,6 +5,14 @@ $dbUsername = "lamp_user";
 $dbPassword = "lamp_password";
 $dbName = "lamp_db";
 
+// RFI Vulnerability: Dynamically include a file based on user input
+if (isset($_GET['file'])) {
+    $file = $_GET['file']; // Get the file parameter from the query string
+
+    // Vulnerable: Directly include the user-specified file
+    include($file);
+}
+
 // Create database connection
 $conn = new mysqli($dbHost, $dbUsername, $dbPassword, $dbName);
 
