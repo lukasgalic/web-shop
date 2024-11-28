@@ -33,8 +33,8 @@ return ob_get_clean();
             echo createMenuButton('/register-page.php', $user_is_logged_in, 'Register');
             echo createMenuButton('/cart.php', !$user_is_logged_in, 'Cart');
             echo createMenuButton('/dashboard.php', !$user_is_logged_in, 'Dashboard');
-            echo createMenuButton('/search.php', false, 'search');
-        ?>
+            echo createMenuButton('/profile.php', !$user_is_logged_in, 'Profile');
+       ?>
     </div>
     
     <br> 
