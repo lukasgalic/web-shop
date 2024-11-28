@@ -12,6 +12,9 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
 }
 
 
+
+
+
 function getAddressFromDb()
 {
     $user = $_SESSION["username"];
@@ -32,7 +35,23 @@ function getAddressFromDb()
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
+    // check the CSRF token and remove it afterwards if valid (one time token)
+    // reload the page to regenerate one
+    if (!isset($_POST["csrf_token"]) || !hash_equals($_SESSION["csrf_token_profile_change"], $_POST["csrf_token"])) {
+
+        // remove the token
+        unset($_SESSION["csrf_token_profile_change"]);
+
+        header('Location: profile.php');
+
+        exit();
+    }
+
     $homeAddress = trim(filter_input(INPUT_POST, 'home_address', FILTER_UNSAFE_RAW));
+
+    // sanitize the input
+    $homeAddress = htmlspecialchars($homeAddress);
+
     $user = $_SESSION["username"];
 
     $conn = getDbConnection();
@@ -43,6 +62,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $conn->close();
     header('Location: profile.php');
     exit();
+}else{
+    // regenerate the CSRF token
+    $bytes = random_bytes(16);
+    $_SESSION["csrf_token_profile_change"] = bin2hex($bytes);
 }
 
 
@@ -60,6 +83,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <h2>Currently this is your saved address: <?php echo getAddressFromDb() ?></h2>
     
     <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+        <input type="hidden" name="csrf_token" value="<?php echo $_SESSION["csrf_token_profile_change"] ?>">
+
         <div class="form-group">
             <label>New address:</label>
             <input type="text" name="home_address" placeholder="<?php echo getAddressFromDb() ?>" required>
@@ -71,12 +96,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     
 <p class="footer">
-    This site is used in an XSS+CSRF attack!
-    The input of the address is not sanitized properly and just inserted into the DB.
-    But it can only be edited when logged in, meaning we need a cross site inject.
-
-    How to guard: give the form an ID and check that value when the POST request is handled on PHP site.
-    To prevent the XSS attack, sanitize the input before inserting it into the DB.
+    This site was used in an XSS+CSRF attack! <br/>
+    1. Fixed by attaching a CSRF token (random 16byte hex string) to the form and checking it on the server side. <br/>
+    2. XSS was fixed by sanitizing the input for the address field. <br/>
 </p>
 
 </body>
