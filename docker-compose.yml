@@ -1,9 +1,9 @@
-version: '3.8'
-
 services:
   # Apache + PHP Service
   apache:
-    build: .
+    build:
+      context: ./
+      dockerfile: ./Dockerfile.httpServer_apache
     container_name: apache
     ports:
       - "8000:80"
@@ -42,13 +42,29 @@ services:
       - db
 
   evil:
-    build: ./evil
+    build:
+      context: ./
+      dockerfile: ./evil/Dockerfile.evil
     container_name: evil
     ports:
       - "9000:80"
     volumes:
       - ./evil:/app
     command: deno run --allow-read --allow-net -A main.ts
+
+  blockchain_bank:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile.blockchain_bank
+    container_name: blockchain_bank
+    ports: # redirect ports to some starting with 70
+      - "7000:3000"
+      - "7080:8080"
+    volumes:
+      - ./blockchain/simpleBlockchain_3000.db:/app/simpleBlockchain/simpleBlockchain_3000.db
+      - ./blockchain/existingWallets/wallet_bank:/app/simpleBlockchain/wallet_bank
+
+    command: ./cli server start -nodeport 3000 -apiport 8080 -walletname bank -ismining=false
 
 
 volumes:
