@@ -16,17 +16,18 @@ After removing it and rebooting the container it should be inited with our initi
 ## general note:
 It is not possible to change the position of some config/wallet files for the software used. I am using [simpleBlockchain](https://github.com/tn606024/simpleBlockchain.git).
 
-The folder here lists all wallets that have been created, only the ones relevant are copied into each container. Bank gets wallet_bank, etc. The files are volume-linked into the GO executable (where it expects to find them in order to run).
+I tried setting this up with containers but sadly that is simply not possible, the go server is too simplistic to handle dockers containment and is stuck inside since the requests go against 'localhost' which is unknown from gos' point of view.
 
-From the containers point of view, there is only ever one wallet inside its execution, you can create a new wallet on whatever api-port you want, doing so will create a file inside a docker container that is **NOT** linked out, meaning its deleted when the container stops. You must copy it out manually but i don't see why you need more wallets.
+Instead everything is setup inside `blockchain/setupBlockChain.sh`.
 
+It also starts two node instances.
+To shutdown the server run: `killall cli` which should then stop them.
+
+The script should take care of that tho, ctrl+c to kill both servers
 
 ## setup
 The server runs 2 nodes, alice and the bank.
-This is not realistic as alice would usually run her node on her own hardware, but since we are dockerizing this and I don't want to deal with y'alls GO configurations, both are running side by side.
-
-The default ports would clash with the webserver, therefore every port has the prefix 70*.
-The bank is _not_ allowed to mine.
+Only alice is allowed to mine for coins.
 
 ### Alice
 
