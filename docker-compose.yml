@@ -52,19 +52,35 @@ services:
       - ./evil:/app
     command: deno run --allow-read --allow-net -A main.ts
 
+# The bank has a node on the server which is not allowed to mine
   blockchain_bank:
     build:
       context: ./
-      dockerfile: ./Dockerfile.blockchain_bank
+      dockerfile: ./blockchain/Dockerfile.blockchain
     container_name: blockchain_bank
     ports: # redirect ports to some starting with 70
-      - "7000:3000"
-      - "7080:8080"
+      - "3000:3000" # nodeport 
+      - "7080:8080" # apiport
     volumes:
-      - ./blockchain/simpleBlockchain_3000.db:/app/simpleBlockchain/simpleBlockchain_3000.db
+      - ./blockchain/simpleBlockchain_bank.db:/app/simpleBlockchain/simpleBlockchain_3000.db
       - ./blockchain/existingWallets/wallet_bank:/app/simpleBlockchain/wallet_bank
-
     command: ./cli server start -nodeport 3000 -apiport 8080 -walletname bank -ismining=false
+
+# Alice also lives on our server,
+# This is rather unrealistic since that means that the servers docker composer is doing
+# the mining as well, but it makes it very portable
+  blockchain_alice:
+    build:
+      context: ./
+      dockerfile: ./blockchain/Dockerfile.blockchain
+    container_name: blockchain_alice
+    ports: # redirect ports to some starting with 70
+      - "7001:3000" # nodeport
+      - "7081:8080" # apiport 
+    volumes:
+      - ./blockchain/simpleBlockchain_alice.db:/app/simpleBlockchain/simpleBlockchain_3000.db
+      - ./blockchain/existingWallets/wallet_alice:/app/simpleBlockchain/wallet_alice
+    command: ./cli server start -nodeport 3000 -apiport 8080 -walletname alice -ismining=true
 
 
 volumes:
