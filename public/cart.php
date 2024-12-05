@@ -9,20 +9,22 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
     exit();
 }
 
+$purchaseConfirmed = false;
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
     // handle paying
 
     if (!checkCsrfToken()) {
-        $message = "CSRF token is not valid!";
+        $message = "CSRF token is not valid! Reload the page.";
         $messageClass = "error";
     } else {
-        // reset the cart
-        $_SESSION["apples"] = 10;
+        // clear the cart
+        $_SESSION["apples"] = 0;
         $_SESSION["bananas"] = 0;
         $_SESSION["grapefruit"] = 0;
-        $message = "Thank you for your purchase!";
-        $messageClass = "success";
+
+        $purchaseConfirmed = true;
     }
 
 
@@ -61,12 +63,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <label style="font-weight: bold;" for="username">You total: $<?php echo $total?></label>
     </div>
     <?php if ($total == 0): ?>
-        <div class="message error" style="margin-top:20px">
-            You have no items in your cart!
-        </div>
+        
+            <?php if ($purchaseConfirmed): ?>
+                <div class="message success" style="margin-top:20px">
+                    Thank you for your purchase! We will manually confirm the has and amount and then send you your produce.
+                </div>
+            <?php else: ?>
+                <div class="message error" style="margin-top:20px">
+                    You have no items in your cart!
+                </div>
+            <?php endif; ?>
+
         <?php else: ?>
     
-    <h2>Confirm your purchase</h2>
+        <h2>Confirm your purchase</h2>
     <div>
         Please transfer the total amount of $<?php echo $total ?> (1$ = 1 coin) to the following wallet address:
         
@@ -87,11 +97,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <div class="form-group">
             <label for="confirmationHash">Confirmation hash:</label>
             <input type="text" name="confirmationHash" required>
-        </div>
-
-        <div class="form-group">
-            <label for="confirmationHash">Exact timestamp:</label>
-            <input type="text" name="exactTimestamp" required>
         </div>
 
         <button type="submit" <?php echo $total == 0 ? "disabled" :"" ?>   >Confirm!</button>
