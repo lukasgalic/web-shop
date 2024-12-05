@@ -1,9 +1,9 @@
-version: '3.8'
-
 services:
   # Apache + PHP Service
   apache:
-    build: .
+    build:
+      context: ./
+      dockerfile: ./Dockerfile.httpServer_apache
     container_name: apache
     ports:
       - "8000:80"
@@ -42,7 +42,9 @@ services:
       - db
 
   evil:
-    build: ./evil
+    build:
+      context: ./
+      dockerfile: ./evil/Dockerfile.evil
     container_name: evil
     ports:
       - "9000:80"
@@ -50,7 +52,5 @@ services:
       - ./evil:/app
     command: deno run --allow-read --allow-net -A main.ts
 
-
 volumes:
   db_data:
-
