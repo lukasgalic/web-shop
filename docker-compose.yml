@@ -52,5 +52,32 @@ services:
       - ./evil:/app
     command: deno run --allow-read --allow-net -A main.ts
 
+  blockchain_alice:
+    build:
+        context: ./
+        dockerfile: ./Dockerfile.blockchain
+    container_name: blockchain_alice
+    expose:
+        - "3000" # nodeaddress, only needed between nodes
+    ports:
+        - "7080:8080" # apiport, accessed from your command line
+    volumes:
+        - ./blockchain/blockchain_alice/:/app/simpleBlockchain/blockchain/
+        - ./blockchain/existingWallets/wallet_alice:/app/simpleBlockchain/wallet_alice:ro
+    command: ./cli server start -nodeaddress blockchain_alice:3000 -peernodeaddress blockchain_bob:3000 -walletname alice -ismining=true
+  blockchain_bob:
+    build:
+        context: ./
+        dockerfile: ./Dockerfile.blockchain
+    container_name: blockchain_bob
+    expose:
+        - "3000" # nodeaddress, only needed between nodes
+    ports:
+        - "7081:8080" # apiport, accessed from your command line
+    volumes:
+    - ./blockchain/blockchain_bob/:/app/simpleBlockchain/blockchain/
+    - ./blockchain/existingWallets/wallet_bob:/app/simpleBlockchain/wallet_bob:ro
+    command: ./cli server start -nodeaddress blockchain_bob:3000 -peernodeaddress blockchain_alice:3000 -walletname bob
+
 volumes:
   db_data:

@@ -85,7 +85,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
         You will most likely need to run this command:
         <div style="margin-top:10px; margin-bottom:10px" >
-            <code> ./cli server sendtransaction --apiport 7081 --to "1LHroFft5WAxZTqXizQJjBJrPwkVQFAcsa" -amount <?php echo $total ?> </code>
+            <code> ./cli server sendtransaction --apiport 7080 --to "1LHroFft5WAxZTqXizQJjBJrPwkVQFAcsa" -amount <?php echo $total ?> </code>
         </div>        
     </div>
 
@@ -104,6 +104,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <?php endif; ?>
 
 
+    <p class="footer">
+    Alice might need to mine some coins first:
+    <code>cd blockchain && ./setupBlockChainTool.sh && cd /tmp/simpleBlockchain && ./cli server miningblock --apiport 7080</code>
+    </p>
 
 </body>
 
