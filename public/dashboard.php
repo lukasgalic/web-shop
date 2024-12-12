@@ -1,4 +1,5 @@
 <?php
+include "common/util.php"; 
    session_start();
    
    if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
@@ -18,6 +19,10 @@
     }
 
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        if (!checkCsrfToken()) {
+            header('Location: dashboard.php');
+            exit();
+        }
         // Get form data and sanitize inputs
         $apples = trim(filter_input(INPUT_POST, 'apples', FILTER_UNSAFE_RAW));
         $bananas = trim(filter_input(INPUT_POST, 'bananas', FILTER_UNSAFE_RAW));
@@ -47,8 +52,8 @@
             <?php echo $message; ?>
         </div>
     <?php endif; ?>
-
     <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+        <?php echo createCsrfTokenFormField() ?>
         <div class="form-group">
             <label for="username">Apples:</label>
             <input type="number" id="apples" name="apples" value="<?php echo $_SESSION["apples"] ?>" required>

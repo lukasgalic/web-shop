@@ -1,4 +1,5 @@
 <?php
+include "common/util.php"; 
 // Database configuration
 $dbHost = "db";     // MySQL host
 $dbUsername = "lamp_user";
@@ -34,6 +35,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $errors[] = "Password is required";
     } elseif (strlen($password) < 1) {
         $errors[] = "Password must be at least 6 characters long";
+    }
+    if (!checkCsrfToken()) {
+        $errors[] = "CSRF token is not valid! Reload the page.";
     }
 
     // Retrieve password
@@ -89,8 +93,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <?php echo $message; ?>
         </div>
     <?php endif; ?>
-
     <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+        <?php echo createCsrfTokenFormField() ?>
         <div class="form-group">
             <label for="username">Username:</label>
             <input type="text" id="username" name="username" value="<?php echo isset($username) ? htmlspecialchars($username) : ''; ?>" required>
