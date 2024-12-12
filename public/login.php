@@ -36,9 +36,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } elseif (strlen($password) < 1) {
         $errors[] = "Password must be at least 6 characters long";
     }
-    if (!checkCsrfToken()) {
-        $errors[] = "CSRF token is not valid! Reload the page.";
-    }
 
     // Retrieve password
     $stmt = $conn->prepare("SELECT * FROM users WHERE username = ?");
@@ -46,25 +43,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->execute();
     $result = $stmt->get_result();
 
-    $row = $result->fetch_assoc();
-    $hashedPasswordFromDB = $row['password'];
+    if ($result && $row = $result->fetch_assoc()) {
+        $hashedPasswordFromDB = $row['password'];
+        if ($row['failed_attempts'] >= 4) {
+            $errors[] = "Too many attempts";
+        }   elseif (!password_verify($password, $hashedPasswordFromDB)) {
+            $stmt = $conn->prepare("Update users SET failed_attempts = ? WHERE id = ?");
+            $increment = $row['failed_attempts'] + 1;
+            $stmt->bind_param("ss", $increment, $row["id"]);
+            $stmt->execute();
+            $stmt->close();
+            $remaining_attempts = 5 - $increment;  
+            $errors[] = "Password was not correct, number of attempts left {$remaining_attempts}";
+        }
+    } else {
+        $hashedPasswordFromDB = null;
+        $errors[] = "Username or password is invalid";   
+    }
     $stmt->close();
 
-    if ($row['failed_attempts'] >= 4) {
-        $errors[] = "Too many attempts";
-    } elseif (!password_verify($password, $hashedPasswordFromDB)) {
-        $stmt = $conn->prepare("Update users SET failed_attempts = ? WHERE id = ?");
-        $increment = $row['failed_attempts'] + 1;
-        $stmt->bind_param("ss", $increment, $row["id"]);
-        $stmt->execute();
-        $stmt->close();
-        $remaining_attempts = 5 - $increment;  
-        $errors[] = "Password was not correct, number of attempts left {$remaining_attempts}";
-    }
+    
+    
 
     // If no errors, proceed with login
     if (empty($errors)) {
-        session_start();
         $_SESSION['logged_in'] = true;
         $_SESSION['username'] = $username;
         $_SESSION['login_time'] = time();
@@ -94,7 +96,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
     <?php endif; ?>
     <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
-        <?php echo createCsrfTokenFormField() ?>
         <div class="form-group">
             <label for="username">Username:</label>
             <input type="text" id="username" name="username" value="<?php echo isset($username) ? htmlspecialchars($username) : ''; ?>" required>
